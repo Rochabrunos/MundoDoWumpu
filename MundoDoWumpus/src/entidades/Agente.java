@@ -33,7 +33,7 @@ public class Agente {
 	public void acao () {
 		int desempenho=0, pesoColetar=-999999999, pesoMover=-999999999, pesoAtirar=-999999999, pesoMorrer=-999999999, atual = -999999999;
 		String acao = null;
-		
+			if((mapa.grid[i][j].getPercepcoes()[0] || mapa.grid[i][j].getPercepcoes()[1])) return;
 			if( mapa.grid[i][j].getPercepcoes()[2] == true) {
 				pesoColetar = performace.desempenho("coletar");
 				if( pesoColetar > atual) {
@@ -42,7 +42,8 @@ public class Agente {
 				}
 				System.out.println("Você ganhou o jogo!");
 				System.exit(1);
-			} else if(mapa.grid[i][j].getPercepcoes()[3] == false && verificacao(i, j+1)) {
+			}
+			if(mapa.grid[i][j].getPercepcoes()[3] == false && verificacao(i, j+1) && !(mapa.grid[i][j].getPercepcoes()[0] || mapa.grid[i][j].getPercepcoes()[1])) {
 				if(!mapa.grid[i][j+1].getDescuberta()) { // prioriza a descoberta de novos quadrados
 					pesoMover = performace.desempenho("mover") + 1;
 				}else {
@@ -55,7 +56,8 @@ public class Agente {
 					atual = pesoMover;
 					acao = "cima";
 				}
-			}else if(mapa.grid[i][j].getPercepcoes()[4] == false && verificacao(i+1, j)) {
+			}
+			if(mapa.grid[i][j].getPercepcoes()[4] == false && verificacao(i+1, j) && !(mapa.grid[i][j].getPercepcoes()[0] || mapa.grid[i][j].getPercepcoes()[1])) {
 				if(!mapa.grid[i+1][j].getDescuberta()) { // prioriza a descoberta de novos quadrados
 					pesoMover = performace.desempenho("mover") + 1;
 				}else {
@@ -68,7 +70,8 @@ public class Agente {
 					atual = pesoMover;
 					acao = "direita";
 				}
-			} else 	if(mapa.grid[i][j].getPercepcoes()[5] == false && verificacao(i, j-1)) {
+			}
+			if(mapa.grid[i][j].getPercepcoes()[5] == false && verificacao(i, j-1) && !(mapa.grid[i][j].getPercepcoes()[0] || mapa.grid[i][j].getPercepcoes()[1])) {
 				if(!mapa.grid[i][j-1].getDescuberta()) { // prioriza a descoberta de novos quadrados
 					pesoMover = performace.desempenho("mover") + 1;
 				}else {
@@ -77,11 +80,12 @@ public class Agente {
 				if(pesoMover > atual) {
 					atual = pesoMover;
 					acao = "baixo";
-				}else if(pesoMover == atual && !(mapa.grid[i][j].getPercepcoes()[0] || mapa.grid[i][j].getPercepcoes()[1])) {
+				}else if(pesoMover == atual) {
 					atual = pesoMover;
 					acao = "baixo";
 				}
-			} else if(mapa.grid[i][j].getPercepcoes()[6] == false && verificacao(i-1, j)) {
+			}
+			if(mapa.grid[i][j].getPercepcoes()[6] == false && verificacao(i-1, j) && !(mapa.grid[i][j].getPercepcoes()[0] || mapa.grid[i][j].getPercepcoes()[1])) {
 				if(!mapa.grid[i-1][j].getDescuberta()) { // prioriza a descoberta de novos quadrados
 					pesoMover = performace.desempenho("mover") + 1;
 				}else {
@@ -135,7 +139,7 @@ public class Agente {
 					System.out.println("Descobri um WUMP no quadrado1 " + (i+1) + (j+1)  + "Porra");
 					mapa.grid[i+1][j+1].getConhecimento().isWump();
 					wumpDescoberto = true;
-					mapa.definePercepcoes(i+1, j+1, 1, false);
+					mapa.definePercepcoes(i+1, j+1, 0, false);
 				}
 			// caso contrario verifica-se no quadrado abaixo
 			}else if(!mapa.grid[i][j].getPercepcoes()[5] && mapa.grid[i][j-1].getDescuberta()&& mapa.grid[i][j-1].getPercepcoes()[0]) { 
@@ -144,7 +148,7 @@ public class Agente {
 					System.out.println("Descobri um WUMP no quadrado2 " + (i+1) + (j-1)  + "Porra");
 					mapa.grid[i+1][j-1].getConhecimento().isWump();
 					wumpDescoberto = true;
-					mapa.definePercepcoes(i+1, j-1, 1, false);
+					mapa.definePercepcoes(i+1, j-1, 0, false);
 				}
 			}
 		}
@@ -157,7 +161,7 @@ public class Agente {
 					System.out.println("Descobri um WUMP no quadrado3 " + (i-1) + (j+1) + "Porra");
 					mapa.grid[i-1][j+1].getConhecimento().isWump();
 					wumpDescoberto = true;
-					mapa.definePercepcoes(i-1, j+1, 1, false);
+					mapa.definePercepcoes(i-1, j+1, 0, false);
 				}
 			// caso contrario verifica-se no quadrdo abaixo
 			}else if(!mapa.grid[i][j].getPercepcoes()[5] && mapa.grid[i][j-1].getDescuberta()&& mapa.grid[i][j-1].getPercepcoes()[0]) { 
@@ -166,7 +170,7 @@ public class Agente {
 					System.out.println("Descobri um WUMP no quadrado4 " + (i-1) + (j-1)  + "Porra");
 					mapa.grid[i-1][j-1].getConhecimento().isWump();
 					wumpDescoberto = true;
-					mapa.definePercepcoes(i-1, j-1, 1, false);
+					mapa.definePercepcoes(i-1, j-1, 0, false);
 				}
 			}
 		}
@@ -223,7 +227,7 @@ public class Agente {
 						if(!mapa.grid[i+1][j+1].getConhecimento().hasPoco()) {
 							System.out.println("Descobri um Poco no quadrado " + (i+1) + (j+1)  + "Porra");
 							mapa.grid[i+1][j+1].getConhecimento().isPoco();
-							mapa.definePercepcoes(i+1, j+1, 1, false);
+							mapa.definePercepcoes(i+1, j+1, 0, false);
 						}
 					// caso contrario verifica-se no quadrado abaixo
 					}else if(!mapa.grid[i][j].getPercepcoes()[5] && mapa.grid[i][j-1].getDescuberta()&& mapa.grid[i][j-1].getPercepcoes()[1]) { 
@@ -243,7 +247,7 @@ public class Agente {
 						if(!mapa.grid[i-1][j+1].getConhecimento().hasPoco()) {
 							System.out.println("Descobri um Poco no quadrado " + (i-1) + (j+1) + "Porra");
 							mapa.grid[i-1][j+1].getConhecimento().isPoco();
-							mapa.definePercepcoes(i-1, j+1,1, false);
+							mapa.definePercepcoes(i-1, j+1,0, false);
 						}
 					// caso contrario verifica-se no quadrdo abaixo
 					}else if(!mapa.grid[i][j].getPercepcoes()[5] && mapa.grid[i][j-1].getDescuberta()&& mapa.grid[i][j-1].getPercepcoes()[1]) { 
@@ -280,7 +284,7 @@ public class Agente {
 					// se o próximo quadrado ja foi visitado anteriormente e existe brisa então existe um poco nele
 					if(!mapa.grid[i][j].getPercepcoes()[4] && mapa.grid[i+1][j].getDescuberta()&& mapa.grid[i+1][j].getPercepcoes()[1]) {
 						// o quadrado ja esta marcado como o receptaculo do poco então não precisa de marca-lo novamente
-						if(!mapa.grid[i+1][j-1].getConhecimento().hasWump()) {
+						if(!mapa.grid[i+1][j-1].getConhecimento().hasPoco()) {
 							System.out.println("Descobri um Poco no quadrado " + (i+1) + (j-1)  + "Porra");
 							mapa.grid[i+1][j-1].getConhecimento().isPoco();
 							mapa.definePercepcoes(i+1, j-1, 1, false);
