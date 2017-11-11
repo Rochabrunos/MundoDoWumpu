@@ -17,11 +17,13 @@ public class Agente {
 	private  MedDesempenho performace = new MedDesempenho(); 
 	private boolean flecha = true;
 	private boolean wumpDescoberto = false;
+	private static int qntdDescoberto = 0; 
 	
 	public Agente (int i, int j) {
 		this.i = i;
 		this.j = j;
 		mapa = new Grid();
+		mapa.grid[i][j].setDescoberta();
 		acao();
 	}
 	public boolean verificacao(int i, int j) {
@@ -33,6 +35,10 @@ public class Agente {
 	public void acao () {
 		int desempenho=0, pesoColetar=-999999999, pesoMover=-999999999, pesoAtirar=-999999999, pesoMorrer=-999999999, atual = -999999999;
 		String acao = null;
+			if(qntdDescoberto == 16) {
+				System.out.println(qntdDescoberto);
+				System.exit(1);
+			}
 			if((mapa.grid[i][j].getPercepcoes()[0] || mapa.grid[i][j].getPercepcoes()[1])) return;
 			if( mapa.grid[i][j].getPercepcoes()[2] == true) {
 				pesoColetar = performace.desempenho("coletar");
@@ -45,56 +51,44 @@ public class Agente {
 			}
 			if(mapa.grid[i][j].getPercepcoes()[3] == false && verificacao(i, j+1) && !(mapa.grid[i][j].getPercepcoes()[0] || mapa.grid[i][j].getPercepcoes()[1])) {
 				if(!mapa.grid[i][j+1].getDescuberta()) { // prioriza a descoberta de novos quadrados
-					pesoMover = performace.desempenho("mover") + 1;
+					pesoMover = performace.desempenho("mover") +5;
 				}else {
-					pesoMover = performace.desempenho("mover");
+					pesoMover = performace.desempenho("mover") - mapa.grid[i][j+1].getPeso();
 				}
 				if(pesoMover > atual) {
-					atual = pesoMover;
-					acao = "cima";
-				}else if(pesoMover == atual && !(mapa.grid[i][j].getPercepcoes()[0] || mapa.grid[i][j].getPercepcoes()[1])) {
 					atual = pesoMover;
 					acao = "cima";
 				}
 			}
 			if(mapa.grid[i][j].getPercepcoes()[4] == false && verificacao(i+1, j) && !(mapa.grid[i][j].getPercepcoes()[0] || mapa.grid[i][j].getPercepcoes()[1])) {
 				if(!mapa.grid[i+1][j].getDescuberta()) { // prioriza a descoberta de novos quadrados
-					pesoMover = performace.desempenho("mover") + 1;
+					pesoMover = performace.desempenho("mover")+5;
 				}else {
-					pesoMover = performace.desempenho("mover");
+					pesoMover = performace.desempenho("mover") - mapa.grid[i+1][j].getPeso();
 				}
 				if(pesoMover > atual) {
-					atual = pesoMover;
-					acao = "direita";
-				}else if(pesoMover == atual && !(mapa.grid[i][j].getPercepcoes()[0] || mapa.grid[i][j].getPercepcoes()[1])) {
 					atual = pesoMover;
 					acao = "direita";
 				}
 			}
 			if(mapa.grid[i][j].getPercepcoes()[5] == false && verificacao(i, j-1) && !(mapa.grid[i][j].getPercepcoes()[0] || mapa.grid[i][j].getPercepcoes()[1])) {
 				if(!mapa.grid[i][j-1].getDescuberta()) { // prioriza a descoberta de novos quadrados
-					pesoMover = performace.desempenho("mover") + 1;
+					pesoMover = performace.desempenho("mover") + 5;
 				}else {
-					pesoMover = performace.desempenho("mover");
+					pesoMover = performace.desempenho("mover") - mapa.grid[i][j-1].getPeso();
 				}
 				if(pesoMover > atual) {
-					atual = pesoMover;
-					acao = "baixo";
-				}else if(pesoMover == atual) {
 					atual = pesoMover;
 					acao = "baixo";
 				}
 			}
 			if(mapa.grid[i][j].getPercepcoes()[6] == false && verificacao(i-1, j) && !(mapa.grid[i][j].getPercepcoes()[0] || mapa.grid[i][j].getPercepcoes()[1])) {
 				if(!mapa.grid[i-1][j].getDescuberta()) { // prioriza a descoberta de novos quadrados
-					pesoMover = performace.desempenho("mover") + 1;
+					pesoMover = performace.desempenho("mover") + 5;
 				}else {
-					pesoMover = performace.desempenho("mover");
+					pesoMover = performace.desempenho("mover") - mapa.grid[i-1][j].getPeso();
 				}
 				if(pesoMover > atual) {
-					atual = pesoMover;
-					acao = "esquerda";
-				}else if(pesoMover == atual && !(mapa.grid[i][j].getPercepcoes()[0] || mapa.grid[i][j].getPercepcoes()[1])) {
 					atual = pesoMover;
 					acao = "esquerda";
 				}
@@ -220,144 +214,98 @@ public class Agente {
 	
 	public void deducaoPoco () {
 		// se o proximo quadrado ja foi visitado anteriormente e existe brisa então existe a possibilidade de se fazer alguma deduçao 
-				if(!mapa.grid[i][j].getPercepcoes()[4] && mapa.grid[i+1][j].getDescuberta() && mapa.grid[i+1][j].getPercepcoes()[1]) {
-					//	se o quadrado acima ja foi visitado anteriormente e existe brisa então existe um poco nele
-					if(!mapa.grid[i][j].getPercepcoes()[3] && mapa.grid[i][j+1].getDescuberta() && mapa.grid[i][j+1].getPercepcoes()[1]) {
-						// o quadrado ja esta marcado como o receptaculo do poco então não precisa de marca-lo novamente
-						if(!mapa.grid[i+1][j+1].getConhecimento().hasPoco()) {
-							System.out.println("Descobri um Poco no quadrado " + (i+1) + (j+1)  + "Porra");
-							mapa.grid[i+1][j+1].getConhecimento().isPoco();
-							mapa.definePercepcoes(i+1, j+1, 0, false);
-						}
-					// caso contrario verifica-se no quadrado abaixo
-					}else if(!mapa.grid[i][j].getPercepcoes()[5] && mapa.grid[i][j-1].getDescuberta()&& mapa.grid[i][j-1].getPercepcoes()[1]) { 
-						// o quadrado ja esta marcado como o receptaculo do wump então não precisa de marca-lo novamente
-						if(!mapa.grid[i+1][j-1].getConhecimento().hasPoco()) {
-							System.out.println("Descobri um Poco no quadrado " + (i+1) + (j-1)  + "Porra");
-							mapa.grid[i+1][j-1].getConhecimento().isPoco();
-							mapa.definePercepcoes(i+1, j-1, 1, false);
-						}
-					}
+		if(!mapa.grid[i][j].getPercepcoes()[4] && mapa.grid[i+1][j].getDescuberta() && mapa.grid[i+1][j].getPercepcoes()[1]) {
+			//	se o quadrado acima ja foi visitado anteriormente e existe brisa então existe um poco nele
+			if(!mapa.grid[i][j].getPercepcoes()[3] && mapa.grid[i][j+1].getDescuberta() && mapa.grid[i][j+1].getPercepcoes()[1]) {
+				// o quadrado ja esta marcado como o receptaculo do poco então não precisa de marca-lo novamente
+				if(!mapa.grid[i+1][j+1].getConhecimento().hasPoco()) {
+					System.out.println("Descobri um Poco no quadrado " + (i+1) + (j+1)  + "Porra");
+					mapa.grid[i+1][j+1].getConhecimento().isPoco();
+					mapa.definePercepcoes(i+1, j+1, 1, false);
 				}
-				// se o quadrado anterior ja foi visitado anteriormente e existe brisa então existe a possibilidade de se fazer alguma deduçao 
-				if(!mapa.grid[i][j].getPercepcoes()[6] && mapa.grid[i-1][j].getDescuberta()  && mapa.grid[i-1][j].getPercepcoes()[1]) { 
-					// se o quadrado acima ja foi visitado anteriormente e existe brisa então existe um poco nele
-					if(!mapa.grid[i][j].getPercepcoes()[3] && mapa.grid[i][j+1].getDescuberta()&& mapa.grid[i][j+1].getPercepcoes()[1]) {
-						// o quadrado ja esta marcado como o receptaculo do poco então não precisa de marca-lo novamente
-						if(!mapa.grid[i-1][j+1].getConhecimento().hasPoco()) {
-							System.out.println("Descobri um Poco no quadrado " + (i-1) + (j+1) + "Porra");
-							mapa.grid[i-1][j+1].getConhecimento().isPoco();
-							mapa.definePercepcoes(i-1, j+1,0, false);
-						}
-					// caso contrario verifica-se no quadrdo abaixo
-					}else if(!mapa.grid[i][j].getPercepcoes()[5] && mapa.grid[i][j-1].getDescuberta()&& mapa.grid[i][j-1].getPercepcoes()[1]) { 
-						// o quadrado ja esta marcado como o receptaculo do poco então não precisa de marca-lo novamente
-						if(!mapa.grid[i-1][j-1].getConhecimento().hasPoco()) {
-							System.out.println("Descobri um Poco no quadrado " + (i-1) + (j-1)  + "Porra");
-							mapa.grid[i-1][j-1].getConhecimento().isPoco();
-							mapa.definePercepcoes(i-1, j-1, 1, false);
-						}
-					}
+			// caso contrario verifica-se no quadrado abaixo
+			}else if(!mapa.grid[i][j].getPercepcoes()[5] && mapa.grid[i][j-1].getDescuberta()&& mapa.grid[i][j-1].getPercepcoes()[1]) { 
+				// o quadrado ja esta marcado como o receptaculo do wump então não precisa de marca-lo novamente
+				if(!mapa.grid[i+1][j-1].getConhecimento().hasPoco()) {
+					System.out.println("Descobri um Poco no quadrado " + (i+1) + (j-1)  + "Porra");
+					mapa.grid[i+1][j-1].getConhecimento().isPoco();
+					mapa.definePercepcoes(i+1, j-1, 1, false);
 				}
-				// se o quadrado superior ja foi visitado anteriormente e existe brisa então existe a possibilidade de se fazer alguma deduçao 
-				if(!mapa.grid[i][j].getPercepcoes()[3] && mapa.grid[i][j+1].getDescuberta()  && mapa.grid[i][j+1].getPercepcoes()[1]) { 
-					// se o proximo quadrado ja foi visitado anteriormente e existe brisa então pode  um poco
-					if(!mapa.grid[i][j].getPercepcoes()[4] && mapa.grid[i+1][j].getDescuberta()&& mapa.grid[i+1][j].getPercepcoes()[1]) {
-						// o quadrado ja esta marcado como o receptaculo do poco então não precisa de marca-lo novamente
-						if(!mapa.grid[i+1][j+1].getConhecimento().hasPoco()) {
-							System.out.println("Descobri um Poco no quadrado " + (i+1) + (j+1)  + "Porra");
-							mapa.grid[i+1][j+1].getConhecimento().isPoco();
-							mapa.definePercepcoes(i+1, j+1, 1, false);				
-						}
-					// caso contrario verifica-se no quadrdo anterior
-					}else if(!mapa.grid[i][j].getPercepcoes()[6] && mapa.grid[i-1][j].getDescuberta()&& mapa.grid[i-1][j].getPercepcoes()[1]) { 
-						// o quadrado ja esta marcado como o receptaculo do poco então não precisa de marca-lo novamente
-						if(!mapa.grid[i-1][j+1].getConhecimento().hasPoco()) {
-							System.out.println("Descobri um Poco no quadrado " + (i-1) + (j+1));
-							mapa.grid[i-1][j+1].getConhecimento().isPoco();
-							mapa.definePercepcoes(i-1, j+1, 1, false);
-						}
-					}
+			}
+		}
+		// se o quadrado anterior ja foi visitado anteriormente e existe brisa então existe a possibilidade de se fazer alguma deduçao 
+		if(!mapa.grid[i][j].getPercepcoes()[6] && mapa.grid[i-1][j].getDescuberta()  && mapa.grid[i-1][j].getPercepcoes()[1]) { 
+			// se o quadrado acima ja foi visitado anteriormente e existe brisa então existe um poco nele
+			if(!mapa.grid[i][j].getPercepcoes()[3] && mapa.grid[i][j+1].getDescuberta()&& mapa.grid[i][j+1].getPercepcoes()[1]) {
+				// o quadrado ja esta marcado como o receptaculo do poco então não precisa de marca-lo novamente
+				if(!mapa.grid[i-1][j+1].getConhecimento().hasPoco()) {
+					System.out.println("Descobri um Poco no quadrado " + (i-1) + (j+1) + "Porra");
+					mapa.grid[i-1][j+1].getConhecimento().isPoco();
+					mapa.definePercepcoes(i-1, j+1, 1, false);
 				}
-				// se o quadrado inferior ja foi visitado anteriormente e existe brisa então existe a possibilidade de se fazer alguma deduçao 
-				if(!mapa.grid[i][j].getPercepcoes()[5] && mapa.grid[i][j-1].getDescuberta()  && mapa.grid[i][j-1].getPercepcoes()[1]) { 
-					// se o próximo quadrado ja foi visitado anteriormente e existe brisa então existe um poco nele
-					if(!mapa.grid[i][j].getPercepcoes()[4] && mapa.grid[i+1][j].getDescuberta()&& mapa.grid[i+1][j].getPercepcoes()[1]) {
-						// o quadrado ja esta marcado como o receptaculo do poco então não precisa de marca-lo novamente
-						if(!mapa.grid[i+1][j-1].getConhecimento().hasPoco()) {
-							System.out.println("Descobri um Poco no quadrado " + (i+1) + (j-1)  + "Porra");
-							mapa.grid[i+1][j-1].getConhecimento().isPoco();
-							mapa.definePercepcoes(i+1, j-1, 1, false);
-						}
-					// caso contrario verifica-se no quadrdo anterior
-					}else if(!mapa.grid[i][j].getPercepcoes()[6] && mapa.grid[i-1][j].getDescuberta()&& mapa.grid[i-1][j].getPercepcoes()[1]) { 
-						// o quadrado ja esta marcado como o receptaculo do poco então não precisa de marca-lo novamente
-						if(!mapa.grid[i-1][j-1].getConhecimento().hasPoco()) {
-							System.out.println("Descobri um Poco no quadrado " + (i-1) + (j-1) + "Porra");
-							mapa.grid[i-1][j-1].getConhecimento().isPoco();
-							mapa.definePercepcoes(i-1, j-1, 1, false);
-						}
-					}
+			// caso contrario verifica-se no quadrdo abaixo
+			}else if(!mapa.grid[i][j].getPercepcoes()[5] && mapa.grid[i][j-1].getDescuberta()&& mapa.grid[i][j-1].getPercepcoes()[1]) { 
+				// o quadrado ja esta marcado como o receptaculo do poco então não precisa de marca-lo novamente
+				if(!mapa.grid[i-1][j-1].getConhecimento().hasPoco()) {
+					System.out.println("Descobri um Poco no quadrado " + (i-1) + (j-1)  + "Porra");
+					mapa.grid[i-1][j-1].getConhecimento().isPoco();
+					mapa.definePercepcoes(i-1, j-1, 1, false);
 				}
-//				Scanner in = new Scanner(System.in);
-//				System.out.println(in.next());
-		
+			}
+		}
 	}
 
 	public void moveToCima() {
+		deducaoWumps();
+		deducaoPoco ();
 		if(mapa.grid[i][j].getPercepcoes()[0] || mapa.grid[i][j].getPercepcoes()[1])
 			return;
 		j = j + 1;
 		mapa.grid[i][j].setDescoberta();
+		qntdDescoberto++;
 		System.out.println("Movi para o quadrado" + i + " " + j);
-		deducaoWumps();
-		deducaoPoco ();
 		acao();
 		j = j - 1;
 		System.out.println("Voltei " + i + " " + j);
-		deducaoWumps();
-		deducaoPoco ();
 	}
 	public void moveToDireita() {
-		if(mapa.grid[i][j].getPercepcoes()[0] || mapa.grid[i][j].getPercepcoes()[1])
-			return;
-		i = i + 1;
-		mapa.grid[i][j].setDescoberta();
-		System.out.println("Movi para o quadrado" + i + " " + j);
 		deducaoWumps();
 		deducaoPoco ();
+		if(mapa.grid[i][j].getPercepcoes()[0] || mapa.grid[i][j].getPercepcoes()[1]) {
+			return;
+		}
+		i = i + 1;
+		mapa.grid[i][j].setDescoberta();
+		qntdDescoberto++;
+		System.out.println("Movi para o quadrado" + i + " " + j);
 		acao();
 		i = i - 1;
 		System.out.println("Voltei " + i + " " + j);
-		deducaoWumps();
-		deducaoPoco ();
 	}
 	public void moveToBaixo() {
+		deducaoWumps();
+		deducaoPoco ();
 		if(mapa.grid[i][j].getPercepcoes()[0] || mapa.grid[i][j].getPercepcoes()[1])
 			return;
 		j = j - 1;
 		System.out.println("Movi para o quadrado" + i + " " + j);
 		mapa.grid[i][j].setDescoberta();
-		deducaoWumps();
-		deducaoPoco ();
+		qntdDescoberto++;
 		acao();
 		j = j + 1;
 		System.out.println("Voltei " + i + " " + j);
-		deducaoWumps();
-		deducaoPoco ();
 	}
 	public void moveToEsquerda() {
+		deducaoWumps();
+		deducaoPoco ();
 		if(mapa.grid[i][j].getPercepcoes()[0] || mapa.grid[i][j].getPercepcoes()[1])
 			return;
 		i = i - 1;
 		mapa.grid[i][j].setDescoberta();
+		qntdDescoberto++;
 		System.out.println("Movi para o quadrado" + i + " " + j);
-		deducaoWumps();
-		deducaoPoco ();
 		acao();
 		i = i + 1;	
 		System.out.println("Voltei " + i + " " + j);
-		deducaoWumps();
-		deducaoPoco ();
 	}	
 }

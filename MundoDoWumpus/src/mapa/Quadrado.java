@@ -15,6 +15,7 @@ public class Quadrado extends Probabilidade{
 	private static int qtdPoco = 0;
 	private boolean temWump = false;
 	private boolean temPoco = false;
+	private int peso = 0;
 	private Informacao conhecimento = new Informacao(); // informacao adquirida pelo agente durante a execução
 	private boolean descoberta = false;
 	
@@ -29,7 +30,7 @@ public class Quadrado extends Probabilidade{
 	}
 	
 	public boolean geraPoco() {
-		if (temPoco() && qtdPoco<2) {
+		if (temPoco() && qtdPoco<3) {
 			temPoco = true;
 			qtdPoco++;
 			return true;
@@ -86,7 +87,12 @@ public class Quadrado extends Probabilidade{
 	}
 	
 	public void setDescoberta () {
+		peso ++;
 		descoberta = true;
+	}
+	
+	public void setDescoberta (boolean value) {
+		descoberta = value;
 	}
 
 	public Informacao getConhecimento() {
@@ -104,5 +110,9 @@ public class Quadrado extends Probabilidade{
 		if(percepcoesAtuais[1]) {
 			System.out.print("Brisa ");
 		}
+	}
+	
+	public int getPeso() {
+		return peso;
 	}
 }
