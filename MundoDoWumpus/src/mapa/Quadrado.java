@@ -11,7 +11,7 @@ public class Quadrado extends Probabilidade{
 			false, false,false, false,false, false,false, false,
 	}; // fedor, brisa, resplendor, impacto(up, left, bottom, right), grito
 	private static int qtdWump = 0;
-	private static int qtdOuro = 1;
+	private static int qtdOuro = 0;
 	private static int qtdPoco = 0;
 	private boolean temWump = false;
 	private boolean temPoco = false;
@@ -19,7 +19,11 @@ public class Quadrado extends Probabilidade{
 	private Informacao conhecimento = new Informacao(); // informacao adquirida pelo agente durante a execução
 	private boolean descoberta = false;
 	
-
+	public void refazMapa() {
+		qtdWump = 0;
+		qtdOuro = 0;
+		qtdPoco = 0;
+	}
 	public boolean geraWump() {
 		if (hasWump(qtdWump)) {
 			qtdWump++;
@@ -40,8 +44,9 @@ public class Quadrado extends Probabilidade{
 	
 	public boolean geraOuro() {
 		if( temOuro(qtdOuro)) {
-			//percepcoesAtuais[2] = true;
+			percepcoesAtuais[2] = true;
 			qtdOuro++;
+			System.out.println("Coloquei a porra do ouro");
 			return true;
 		}
 		return false;
@@ -60,7 +65,7 @@ public class Quadrado extends Probabilidade{
 	}
 
 	public static boolean restricao() {
-		return qtdWump>0 && qtdOuro>0;
+		return (qtdWump==1 && qtdOuro==1 && qtdPoco==3);
 	}
 	
 	public boolean hasWumps() {
@@ -79,7 +84,12 @@ public class Quadrado extends Probabilidade{
 		return temWump;
 	}
 	public boolean shoot () {
-		return temWump;
+		if(temWump) {
+			temWump = false;
+			conhecimento.mataWumpus();
+			return true;
+		}
+		return false;
 	}
 	
 	public boolean getDescuberta() {
@@ -87,7 +97,7 @@ public class Quadrado extends Probabilidade{
 	}
 	
 	public void setDescoberta () {
-		peso ++;
+		peso++;
 		descoberta = true;
 	}
 	

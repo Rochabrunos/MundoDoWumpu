@@ -3,14 +3,11 @@ package mapa;
 import reacoes.Percepcoes;
 
 public class Grid {
-	public Quadrado grid[][] = new Quadrado[4][4];
+	public Quadrado grid[][] = new Quadrado[4][4];;
 	
 	
 	public Grid () {
-		while(!grid[0][0].restricao()) {
-			geraGrid();
-		}
-		printMap();
+		geraGrid();
 	}
 	// gera a matriz de espaços
 	public void geraGrid() {
@@ -21,12 +18,13 @@ public class Grid {
 				grid[i][j] = new Quadrado(); 
 			}
 		}
-		
+		grid[0][0].refazMapa();
 		for(int i = 0 ; i < 4 ; i++) {
 			for( int j = 0 ; j < 4 ; j++) {
 				geraElementos(i, j);
 			}
 		}
+		
 	}
 	//distribui os elementos sobre os quadrados
 	public void geraElementos(int i, int j) {
@@ -48,18 +46,17 @@ public class Grid {
 				System.out.println("POCO no quadrado " + i + " "+ j);
 				definePercepcoes(i, j, 1, true);
 			}
-		} 
+		}
+		
 		if ((!grid[i][j].getPercepcoes()[0] && !grid[i][j].getPercepcoes()[1])) {
 			if (grid[i][j].geraWump()) {
 				System.out.println("WUMP no quadrado " + i + " "+ j);
 				definePercepcoes(i, j, 0, true);
 			}
-		} 
-		
-		/*if(grid[i][j].geraOuro()) {
-			System.out.println("ouro no quadrado " + i + " "+ j);
-		}*/
-				
+		} 	
+		if(!grid[i][j].getTemPoco() && grid[i][j].geraOuro()) {
+			System.out.println("Ouro no quadrado " + i + " "+ j);
+		}
 	}
 	//define a percepcao dos quadrados adjacentes
 	public void definePercepcoes(int i , int j, int tipo, boolean valor) { //tipo[i] = fedor[1], brisa[2], resplendor[3], ....
@@ -88,6 +85,16 @@ public class Grid {
 			System.out.print("\t");
 			}
 			System.out.println();
+		}
+	}
+	public void refazPercepcoes() {
+		for( int i = 0; i<4 ; i++) {
+			for( int j = 0; j<4 ; j++) {
+				if(grid[i][j].getTemPoco() && !grid[i][j].hasPoco()) {
+					System.out.println("Refazendo as percepcoes do quadrado " + i + " " + j);
+					definePercepcoes(i, j, 1, true);
+				}
+			}
 		}
 	}
 }

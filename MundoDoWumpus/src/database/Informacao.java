@@ -29,4 +29,7 @@ public class Informacao {
 	public boolean condicoes() {
 		return hasPoco || hasWump;
 	}
+	public void mataWumpus() {
+		hasWump = false;
+	}
 }

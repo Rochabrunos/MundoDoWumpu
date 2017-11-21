@@ -4,7 +4,7 @@ import java.util.Random;
 //essa classe possui a probabilidade dos elementos ocorrerem
 public class Probabilidade {
 	private double probWums = 0.1;
-	private double probPoco = 0.25;
+	private double probPoco = 0.4;
 	private double probOuro = 0.1;
 	
 	public boolean hasWump(int isWump) {

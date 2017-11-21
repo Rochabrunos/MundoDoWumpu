@@ -21,4 +21,8 @@ public class MedDesempenho {
 	public void agir (String acao) {
 		valor+=penalizacao.get(acao);
 	}
+	
+	public int getPontuacao() {
+		return valor;
+	}
 }
