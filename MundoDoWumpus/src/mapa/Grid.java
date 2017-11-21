@@ -43,19 +43,16 @@ public class Grid {
 		if((i == 0 && j == 0) || (i == 0 && j == 1)|| (i == 1 && j == 1)|| (i == 1 && j == 0)) return ;
 		if ((!grid[i][j].getPercepcoes()[0] && !grid[i][j].getPercepcoes()[1]) ) {
 			if(grid[i][j].geraPoco()) {
-				System.out.println("POCO no quadrado " + i + " "+ j);
 				definePercepcoes(i, j, 1, true);
 			}
 		}
 		
 		if ((!grid[i][j].getPercepcoes()[0] && !grid[i][j].getPercepcoes()[1])) {
 			if (grid[i][j].geraWump()) {
-				System.out.println("WUMP no quadrado " + i + " "+ j);
 				definePercepcoes(i, j, 0, true);
 			}
 		} 	
 		if(!grid[i][j].getTemPoco() && grid[i][j].geraOuro()) {
-			System.out.println("Ouro no quadrado " + i + " "+ j);
 		}
 	}
 	//define a percepcao dos quadrados adjacentes

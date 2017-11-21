@@ -30,13 +30,15 @@ public class Agente {
 	}
 	public void geraMapa() {
 		Grid mapa = new Grid();
-		
-		if (mapa.grid[0][0].restricao()) {
-			this.mapa = mapa;
-			this.mapa.printMap();
-		}else {
-			System.out.println("Gerando a porra do mapa novamente");
-			geraMapa();
+		try {
+			if (mapa.grid[0][0].restricao()) {
+				this.mapa = mapa;
+				this.mapa.printMap();
+			}else {
+				geraMapa();
+			}
+		}catch (Exception e) {
+			System.out.println("N�O FOI POSSIVEL GERAR O MAPA.");
 		}
 	}
 	public boolean verificacao(int i, int j) {
@@ -174,8 +176,7 @@ public class Agente {
 		}
 	}
 	public void deducaoWumps (int i, int j) {
-		Scanner in = new Scanner(System.in);
-		
+	
 		if(wumpDescoberto) {
 			return;
 		}
@@ -191,7 +192,6 @@ public class Agente {
 					mapa.definePercepcoes(i+1, j+1, 0, false);
 					wumpusX = i+1;
 					wumpusY = j+1;
-					System.out.println(in.next());
 				}
 			// caso contrario verifica-se no quadrado abaixo
 			}else if(!mapa.grid[i][j].getPercepcoes()[5] && mapa.grid[i][j-1].getDescuberta()&& mapa.grid[i][j-1].getPercepcoes()[0]) { 
@@ -203,7 +203,6 @@ public class Agente {
 					mapa.definePercepcoes(i+1, j-1, 0, false);
 					wumpusX = i+1;
 					wumpusY = j-1;
-					System.out.println(in.next());
 				}
 			}
 		}
@@ -219,7 +218,6 @@ public class Agente {
 					mapa.definePercepcoes(i-1, j+1, 0, false);
 					wumpusX = i-1;
 					wumpusY = j+1;
-					System.out.println(in.next());
 				}
 			// caso contrario verifica-se no quadrdo abaixo
 			}else if(!mapa.grid[i][j].getPercepcoes()[5] && mapa.grid[i][j-1].getDescuberta()&& mapa.grid[i][j-1].getPercepcoes()[0]) { 
@@ -231,12 +229,9 @@ public class Agente {
 					mapa.definePercepcoes(i-1, j-1, 0, false);
 					wumpusX = i-1;
 					wumpusY = j-1;
-					System.out.println(in.next());
 				}
 			}
 		}
-//		Scanner in = new Scanner(System.in);
-//		System.out.println(in.next());
 	}
 	public void deducaoPoco() {
 		if(j<3) 
@@ -249,7 +244,6 @@ public class Agente {
 		deducaoPoco(i-1, j);
 	}
 	public void deducaoPoco (int i, int j) {
-		Scanner in = new Scanner(System.in);
 		// se o proximo quadrado ja foi visitado anteriormente e existe brisa então existe a possibilidade de se fazer alguma deduçao 
 		if(!mapa.grid[i][j].getPercepcoes()[4] && mapa.grid[i+1][j].getDescuberta() && mapa.grid[i+1][j].getPercepcoes()[1]) {
 			//	se o quadrado acima ja foi visitado anteriormente e existe brisa então existe um poco nele
@@ -260,7 +254,6 @@ public class Agente {
 					mapa.grid[i+1][j+1].getConhecimento().isPoco();
 					mapa.definePercepcoes(i+1, j+1, 1, false);
 					mapa.refazPercepcoes();
-					System.out.println(in.next());
 				}
 			// caso contrario verifica-se no quadrado abaixo
 			}else if(!mapa.grid[i][j].getPercepcoes()[5] && mapa.grid[i][j-1].getDescuberta()&& mapa.grid[i][j-1].getPercepcoes()[1]) { 
@@ -270,7 +263,6 @@ public class Agente {
 					mapa.grid[i+1][j-1].getConhecimento().isPoco();
 					mapa.definePercepcoes(i+1, j-1, 1, false);
 					mapa.refazPercepcoes();
-					System.out.println(in.next());
 				}
 			}
 		}
@@ -284,7 +276,6 @@ public class Agente {
 					mapa.grid[i-1][j+1].getConhecimento().isPoco();
 					mapa.definePercepcoes(i-1, j+1, 1, false);
 					mapa.refazPercepcoes();
-					System.out.println(in.next());
 				}
 			// caso contrario verifica-se no quadrdo abaixo
 			}else if(!mapa.grid[i][j].getPercepcoes()[5] && mapa.grid[i][j-1].getDescuberta()&& mapa.grid[i][j-1].getPercepcoes()[1]) { 
@@ -294,7 +285,6 @@ public class Agente {
 					mapa.grid[i-1][j-1].getConhecimento().isPoco();
 					mapa.definePercepcoes(i-1, j-1, 1, false);
 					mapa.refazPercepcoes();
-					System.out.println(in.next());
 				}
 			}
 		}

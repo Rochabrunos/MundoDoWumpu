@@ -46,7 +46,6 @@ public class Quadrado extends Probabilidade{
 		if( temOuro(qtdOuro)) {
 			percepcoesAtuais[2] = true;
 			qtdOuro++;
-			System.out.println("Coloquei a porra do ouro");
 			return true;
 		}
 		return false;
